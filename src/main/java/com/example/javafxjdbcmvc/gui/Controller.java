@@ -39,7 +39,7 @@ public class Controller implements Initializable {
     }
     @FXML
     public void onMenuItemDepartmentAction() {
-        System.out.println("Department");
+        loadView("DepartmentList.fxml");
     }
 
     @FXML
@@ -53,7 +53,7 @@ public class Controller implements Initializable {
     }
 
     //Função para abrir outra tela
-    private void loadView(String absoluteName){ //passa o nome da view
+    private synchronized void loadView(String absoluteName){ //passa o nome da view
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
             VBox vBox = loader.load();
