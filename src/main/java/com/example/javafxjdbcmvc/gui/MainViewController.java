@@ -2,6 +2,7 @@ package com.example.javafxjdbcmvc.gui;
 
 import com.example.javafxjdbcmvc.Application;
 import com.example.javafxjdbcmvc.gui.util.Alerts;
+import com.example.javafxjdbcmvc.model.services.DepartmentService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,6 +17,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 
 public class MainViewController implements Initializable {
@@ -35,14 +37,20 @@ public class MainViewController implements Initializable {
         System.out.println("Seller");
 
     }
+
+
     @FXML
     public void onMenuItemDepartmentAction() {
-        loadView("DepartmentList.fxml");
+        //Inicializa o controlador como paramentro
+        loadView("DepartmentList.fxml", (DepartmentListController controller)->{
+            controller.setDepartmentService(new DepartmentService());
+            controller.updateTableView();
+        });
     }
 
     @FXML
     public void onAboutAction() {
-        loadView("About.fxml");
+        loadView("About.fxml", x->{});
 
     }
 
@@ -50,8 +58,8 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
 
-    //Função para abrir outra tela
-    private synchronized void loadView(String absoluteName){ //passa o nome da view
+    //Função para abrir outra tela, passa o nome do arquivo xml e o controlador desejado
+    private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction){ //passa o nome da view
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
             VBox vBox = loader.load();
@@ -63,6 +71,11 @@ public class MainViewController implements Initializable {
 
             mainVbox.getChildren().add(mainMenu);
             mainVbox.getChildren().addAll(vBox.getChildren());
+
+            //Acessa o controlador
+            T controller = loader.getController();
+            initializingAction.accept(controller);
+
         }
         catch (IOException e){
             Alerts.showAlert("Io Exception","Error loading view", e.getMessage(), Alert.AlertType.ERROR);
