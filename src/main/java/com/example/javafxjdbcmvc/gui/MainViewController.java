@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 
-public class Controller implements Initializable {
+public class MainViewController implements Initializable {
     @FXML
     private Label welcomeText;
     @FXML
@@ -29,8 +29,6 @@ public class Controller implements Initializable {
     @FXML
     private MenuItem about;
 
-    @FXML
-    private Alerts alerts;
 
     @FXML
     public void onMenuItemSellerAction() {
@@ -67,7 +65,7 @@ public class Controller implements Initializable {
             mainVbox.getChildren().addAll(vBox.getChildren());
         }
         catch (IOException e){
-            alerts.showAlert("Io Exception","Error loading view", e.getMessage(), Alert.AlertType.ERROR);
+            Alerts.showAlert("Io Exception","Error loading view", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 }
