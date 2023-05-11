@@ -42,7 +42,8 @@ public class DepartmentListController implements Initializable {
     @FXML
     public void onButtonRegistrerAction(ActionEvent event){ //pega a referência do controller que realizou o event
         Stage parentStage = Utils.currentStage(event);
-        createDialogForm("DepartmentForms.fxml", parentStage);
+        Department department = new Department();
+        createDialogForm(department, "DepartmentForms.fxml", parentStage);
     }
 
 
@@ -74,10 +75,13 @@ public class DepartmentListController implements Initializable {
         tableViewDepartment.setItems(observableList);
     }
 
-    private void createDialogForm(String absoluteName, Stage parentStage){
+    private void createDialogForm(Department department, String absoluteName, Stage parentStage){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
             AnchorPane pane = loader.load();
+            DepartmentFormsController controller = loader.getController();
+            controller.setDepartment(department);
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Enter department data");
             dialogStage.setScene(new Scene(pane));
@@ -85,6 +89,8 @@ public class DepartmentListController implements Initializable {
             dialogStage.initOwner(parentStage); //Stage pai da janela
             dialogStage.initModality(Modality.WINDOW_MODAL); //diz se a janela é modal ou outro comportamento, modal é travado enqanto não fecha ela
             dialogStage.showAndWait();
+            controller.updateFormData();
+
         }
         catch (IOException e){
           //  Alerts.showAlert("Io Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);

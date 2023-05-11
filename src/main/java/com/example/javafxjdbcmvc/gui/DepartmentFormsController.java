@@ -1,6 +1,7 @@
 package com.example.javafxjdbcmvc.gui;
 
 import com.example.javafxjdbcmvc.gui.util.Constraints;
+import com.example.javafxjdbcmvc.model.entities.Department;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -12,6 +13,7 @@ import java.nio.Buffer;
 import java.util.ResourceBundle;
 
 public class DepartmentFormsController implements Initializable {
+    private Department department;
     @FXML
     private TextField textFieldId;
     @FXML
@@ -31,10 +33,22 @@ public class DepartmentFormsController implements Initializable {
         System.out.println("Cancel");
     }
 
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public void updateFormData(){
+        if (department == null){
+            throw new IllegalStateException("Entity was null");
+        }
+        textFieldId.setText(String.valueOf(department.getId()));
+        textFieldName.setText(String.valueOf(department.getName()));
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeNodes();
     }
+
 
     private void initializeNodes(){
         Constraints.setTextFieldInteger(textFieldId);
