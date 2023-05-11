@@ -32,7 +32,6 @@ public class DepartmentDaoJdbc implements DepartmentDao {
 
                 }
                 DB.closeResultSet(rs);
-                System.out.println("Done");
             }
             else {
                 throw new DbException("Error. Insert didn't conclude");
@@ -63,10 +62,7 @@ public class DepartmentDaoJdbc implements DepartmentDao {
             st.setString(1, department.getName());
             st.setInt(2, department.getId());
             int result = st.executeUpdate();
-            if (testExecuteQuery(result)) {
-                System.out.println("Done");
-            }
-            else {
+            if (!testExecuteQuery(result)) {
                 throw new DbException("Error. Id doesn't exist");
             }
 

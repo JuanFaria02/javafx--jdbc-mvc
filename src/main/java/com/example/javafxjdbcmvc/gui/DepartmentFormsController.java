@@ -1,6 +1,7 @@
 package com.example.javafxjdbcmvc.gui;
 
 import com.example.javafxjdbcmvc.db.exceptions.DbException;
+import com.example.javafxjdbcmvc.gui.listeners.DataChangeListener;
 import com.example.javafxjdbcmvc.gui.util.Alerts;
 import com.example.javafxjdbcmvc.gui.util.Constraints;
 import com.example.javafxjdbcmvc.gui.util.Utils;
@@ -9,15 +10,19 @@ import com.example.javafxjdbcmvc.model.services.DepartmentService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.LightBase;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class DepartmentFormsController implements Initializable {
+    private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
     private DepartmentService departmentService;
     private Department department;
     @FXML
@@ -41,10 +46,17 @@ public class DepartmentFormsController implements Initializable {
         try {
             department = getFormData(); //Vai pegar os dados do text field e implementar no department
             departmentService.saveOrUpdate(department);
+            notifyDataChangeListener();
             Utils.currentStage(event).close();
         }
         catch (DbException e){
             Alerts.showAlert("Error saving object", null, e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    public void notifyDataChangeListener(){
+        for (DataChangeListener listener:dataChangeListeners){
+            listener.onDataChanged();
         }
     }
     @FXML
@@ -58,6 +70,10 @@ public class DepartmentFormsController implements Initializable {
 
     public void setDepartmentService(DepartmentService departmentService) {
         this.departmentService = departmentService;
+    }
+    //Vai adicionar outros objetos na lista
+    public void subscriteDataChangeListener(DataChangeListener listener){
+        dataChangeListeners.add(listener);
     }
 
     public void updateFormData(){
