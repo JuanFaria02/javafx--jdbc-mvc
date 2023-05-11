@@ -81,15 +81,17 @@ public class DepartmentListController implements Initializable {
             AnchorPane pane = loader.load();
             DepartmentFormsController controller = loader.getController();
             controller.setDepartment(department);
-
+            controller.setDepartmentService(new DepartmentService());
+            controller.updateFormData();
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Enter department data");
             dialogStage.setScene(new Scene(pane));
             dialogStage.setResizable(false); //Diz se a janela pode ou não ser redimensionada;
             dialogStage.initOwner(parentStage); //Stage pai da janela
             dialogStage.initModality(Modality.WINDOW_MODAL); //diz se a janela é modal ou outro comportamento, modal é travado enqanto não fecha ela
+
             dialogStage.showAndWait();
-            controller.updateFormData();
+
 
         }
         catch (IOException e){
