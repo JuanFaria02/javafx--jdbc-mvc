@@ -3,6 +3,7 @@ package com.example.javafxjdbcmvc.gui;
 import com.example.javafxjdbcmvc.Application;
 import com.example.javafxjdbcmvc.gui.util.Alerts;
 import com.example.javafxjdbcmvc.model.services.DepartmentService;
+import com.example.javafxjdbcmvc.model.services.SellerService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -34,7 +35,11 @@ public class MainViewController implements Initializable {
 
     @FXML
     public void onMenuItemSellerAction() {
-        System.out.println("Seller");
+        //Inicializa o controlador como paramentro
+        loadView("SellerList.fxml", (SellerListController controller)->{
+            controller.setSellerService(new SellerService());
+            controller.updateTableView();
+        });
 
     }
 
