@@ -6,6 +6,7 @@ import com.example.javafxjdbcmvc.gui.util.Alerts;
 import com.example.javafxjdbcmvc.gui.util.Constraints;
 import com.example.javafxjdbcmvc.gui.util.Utils;
 import com.example.javafxjdbcmvc.model.entities.Department;
+import com.example.javafxjdbcmvc.model.exceptions.ValidationException;
 import com.example.javafxjdbcmvc.model.services.DepartmentService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,9 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DepartmentFormsController implements Initializable {
     private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
@@ -51,6 +50,9 @@ public class DepartmentFormsController implements Initializable {
         }
         catch (DbException e){
             Alerts.showAlert("Error saving object", null, e.getMessage(), Alert.AlertType.ERROR);
+        }
+        catch (ValidationException e){
+            setErrorMessages(e.getErrors());
         }
     }
 
@@ -89,10 +91,28 @@ public class DepartmentFormsController implements Initializable {
         return  (department.getName() != null) ? name : "";
     }
 
+
+    private void setErrorMessages(Map<String, String> errorMessages){
+        Set<String> fields = errorMessages.keySet();
+        if (fields.contains("Name")){
+            textErrorName.setText(errorMessages.get("Name"));
+        }
+    }
     private Department getFormData(){
         Department obj = new Department();
+
+        ValidationException exception = new ValidationException("Validation error"); //Instaciou a exceção
         obj.setId(Utils.tryParseToInt(textFieldId.getText()));
+
+        if (textFieldName.getText() == null || textFieldName.getText().trim().equals("")){
+            exception.addErrors("Name", "Field can't be empty");
+        }
+
         obj.setName(textFieldName.getText());
+
+        if (exception.getErrors().size()>0){
+            throw exception;
+        }
         return obj;
     }
     @Override
