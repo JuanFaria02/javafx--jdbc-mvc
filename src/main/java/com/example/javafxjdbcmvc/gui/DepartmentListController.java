@@ -5,6 +5,7 @@ import com.example.javafxjdbcmvc.gui.listeners.DataChangeListener;
 import com.example.javafxjdbcmvc.gui.util.Utils;
 import com.example.javafxjdbcmvc.model.entities.Department;
 import com.example.javafxjdbcmvc.model.services.DepartmentService;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,6 +27,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class DepartmentListController implements Initializable, DataChangeListener {
+    @FXML
+    private TableColumn<Department, Department> tableColumnEdit; //Table para edição
     @FXML
     private ObservableList<Department> observableList;
     private DepartmentService departmentService;
@@ -43,8 +47,25 @@ public class DepartmentListController implements Initializable, DataChangeListen
         Department department = new Department();
         createDialogForm(department, "DepartmentForms.fxml", parentStage);
     }
-
-
+    //Cada departamento vai ter um botão para editar
+    private void initEditButtons(){
+        tableColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnEdit.setCellFactory(param -> new TableCell<Department, Department>() {
+            private final Button button = new Button("edit");
+            @Override
+            protected void updateItem(Department obj, boolean empty) {
+                super.updateItem(obj, empty);
+                if (obj == null) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(button);
+                button.setOnAction(
+                        event -> createDialogForm(
+                                obj, "DepartmentForms.fxml",Utils.currentStage(event)));
+            }
+        });
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -70,6 +91,7 @@ public class DepartmentListController implements Initializable, DataChangeListen
         observableList = FXCollections.observableArrayList();
         observableList.addAll(departmentService.findAll());
         tableViewDepartment.setItems(observableList);
+        initEditButtons(); //Vai colocar um botão a cada linha para editar
     }
 
     private void createDialogForm(Department department, String absoluteName, Stage parentStage){
