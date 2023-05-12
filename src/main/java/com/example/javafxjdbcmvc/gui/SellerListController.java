@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -40,9 +42,16 @@ public class SellerListController implements Initializable, DataChangeListener {
     private TableColumn<Seller, Integer> tableColumnId;
     @FXML
     private TableColumn<Seller, String> tableColumnName;
+    @FXML
+    private TableColumn<Seller, LocalDate> tableColumnBirthDate;
+    @FXML
+    private TableColumn<Seller, Double> tableColumnBaseSalary;
+    @FXML
+    private TableColumn<Seller, String> tableColumnEmail;
 
     @FXML
     private Button buttonRegistrer;
+
     @FXML
     public void onButtonRegistrerAction(ActionEvent event){ //pega a referência do controller que realizou o event
         Stage parentStage = Utils.currentStage(event);
@@ -109,9 +118,16 @@ public class SellerListController implements Initializable, DataChangeListener {
 
     }
     private void initializeNode(){
-        //Inicia comportamento das colunas
+        //Inicia comportamento das colunas, o nome passado é o do atributo da classe
         tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        tableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
+        tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+
+        //Formatação
+        Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
+        Utils.formatTableColumnDouble(tableColumnBaseSalary, 2);
         //Faz a table view ficar até o final da tela
         Stage stage = (Stage) Application.getMainScene().getWindow(); //Pega referencia da janela que é uma superclasse do stage
         tableViewSeller.prefHeightProperty().bind(stage.heightProperty()); //Comando para a table view acompanhar o tamanho da janela
