@@ -1,7 +1,9 @@
 package com.example.javafxjdbcmvc.gui;
 
 import com.example.javafxjdbcmvc.Application;
+import com.example.javafxjdbcmvc.db.exceptions.DbException;
 import com.example.javafxjdbcmvc.gui.listeners.DataChangeListener;
+import com.example.javafxjdbcmvc.gui.util.Alerts;
 import com.example.javafxjdbcmvc.gui.util.Utils;
 import com.example.javafxjdbcmvc.model.entities.Department;
 import com.example.javafxjdbcmvc.model.services.DepartmentService;
@@ -13,10 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -24,9 +23,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DepartmentListController implements Initializable, DataChangeListener {
+    @FXML
+    private TableColumn<Department, Department> tableColumnDelete;
     @FXML
     private TableColumn<Department, Department> tableColumnEdit; //Table para edição
     @FXML
@@ -47,6 +49,40 @@ public class DepartmentListController implements Initializable, DataChangeListen
         Department department = new Department();
         createDialogForm(department, "DepartmentForms.fxml", parentStage);
     }
+
+    private void initDeleteButton(){
+        tableColumnDelete.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnDelete.setCellFactory(param -> new TableCell<Department, Department>() {
+            private final Button button = new Button("remove");
+            @Override
+            protected void updateItem(Department obj, boolean empty) {
+                super.updateItem(obj, empty);
+                if (obj == null) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(button);
+                button.setOnAction(event -> removeEntity(obj));
+            }
+        });
+    }
+
+    private void removeEntity(Department obj){
+        Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
+        if (result.get() == ButtonType.OK){
+            if (departmentService == null){
+                throw new IllegalStateException("Service was null");
+            }
+            try {
+                departmentService.delete(obj);
+                updateTableView();
+            }
+            catch (DbException e){
+                Alerts.showAlert("Error removing object", null, e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+    }
+
     //Cada departamento vai ter um botão para editar
     private void initEditButtons(){
         tableColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
@@ -92,6 +128,7 @@ public class DepartmentListController implements Initializable, DataChangeListen
         observableList.addAll(departmentService.findAll());
         tableViewDepartment.setItems(observableList);
         initEditButtons(); //Vai colocar um botão a cada linha para editar
+        initDeleteButton();
     }
 
     private void createDialogForm(Department department, String absoluteName, Stage parentStage){
