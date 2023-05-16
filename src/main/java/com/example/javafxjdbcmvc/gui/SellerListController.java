@@ -6,6 +6,7 @@ import com.example.javafxjdbcmvc.gui.listeners.DataChangeListener;
 import com.example.javafxjdbcmvc.gui.util.Alerts;
 import com.example.javafxjdbcmvc.gui.util.Utils;
 import com.example.javafxjdbcmvc.model.entities.Seller;
+import com.example.javafxjdbcmvc.model.services.DepartmentService;
 import com.example.javafxjdbcmvc.model.services.SellerService;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -155,7 +156,8 @@ public class SellerListController implements Initializable, DataChangeListener {
 
             SellerFormsController controller = loader.getController();
             controller.setSeller(Seller);
-            controller.setSellerService(new SellerService());
+            controller.setServices(new SellerService(), new DepartmentService());
+            controller.loadAssociateObjects();
             controller.subscriteDataChangeListener(this); //Se inscreve para receber o evento de inscrição e então executa o onDataChangeListener
             controller.updateFormData();
 
@@ -171,7 +173,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 
         }
         catch (IOException e){
-          //  Alerts.showAlert("Io Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
+            Alerts.showAlert("Io Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
             e.printStackTrace();
         }
     }
