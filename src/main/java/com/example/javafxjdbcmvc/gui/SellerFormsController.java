@@ -11,10 +11,7 @@ import com.example.javafxjdbcmvc.model.services.SellerService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.*;
@@ -28,7 +25,19 @@ public class SellerFormsController implements Initializable {
     @FXML
     private TextField textFieldName;
     @FXML
+    private TextField textFieldEmail;
+    @FXML
+    private DatePicker birthDate; //Data na aplicação
+    @FXML
+    private TextField baseSalary;
+    @FXML
     private Label textErrorName;
+    @FXML
+    private Label textErrorEmail;
+    @FXML
+    private Label textErrorBithDate;
+    @FXML
+    private Label textErrorBaseSalary;
     @FXML
     private Button buttonSave;
     @FXML
@@ -84,6 +93,11 @@ public class SellerFormsController implements Initializable {
 
         textFieldId.setText(String.valueOf(seller.getId()));
         textFieldName.setText(verifyIfNameIsNull(seller.getName()));
+        textFieldEmail.setText(seller.getEmail());
+        Locale.setDefault(Locale.US); //Colocar . e não ,
+        baseSalary.setText(String.format("%.2f", seller.getBaseSalary()));
+        birthDate.setValue(seller.getBirthDate());
+
     }
 
     private String verifyIfNameIsNull(String name){
@@ -122,7 +136,9 @@ public class SellerFormsController implements Initializable {
 
     private void initializeNodes(){
         Constraints.setTextFieldInteger(textFieldId);
-        Constraints.setTextFieldMaxLength(textFieldName, 30);
-
+        Constraints.setTextFieldMaxLength(textFieldName, 70);
+        Constraints.setTextFieldDouble(baseSalary);
+        Constraints.setTextFieldMaxLength(textFieldEmail, 60);
+        Utils.formatDatePicker(birthDate, "dd/MM/yyyy");
     }
 }
