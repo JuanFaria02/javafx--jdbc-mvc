@@ -148,7 +148,7 @@ public class SellerListController implements Initializable, DataChangeListener {
     }
 
     private void createDialogForm(Seller Seller, String absoluteName, Stage parentStage){
-        /*
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
             AnchorPane pane = loader.load();
@@ -174,8 +174,6 @@ public class SellerListController implements Initializable, DataChangeListener {
           //  Alerts.showAlert("Io Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
             e.printStackTrace();
         }
-
-         */
     }
 
 
