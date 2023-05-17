@@ -43,6 +43,9 @@ public class DepartmentListController implements Initializable, DataChangeListen
 
     @FXML
     private Button buttonRegistrer;
+
+    //BOTÕES
+
     @FXML
     public void onButtonRegistrerAction(ActionEvent event){ //pega a referência do controller que realizou o event
         Stage parentStage = Utils.currentStage(event);
@@ -103,6 +106,15 @@ public class DepartmentListController implements Initializable, DataChangeListen
         });
     }
 
+    //Quando notificar que os dados foram alterados vamos atualizar a tabela
+    @Override
+    public void onDataChanged() {
+        updateTableView();
+    }
+
+    //-----------------------------------------------------------------------//
+
+    //  INICIALIZAÇÃO
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeNode();
@@ -116,9 +128,10 @@ public class DepartmentListController implements Initializable, DataChangeListen
         Stage stage = (Stage) Application.getMainScene().getWindow(); //Pega referencia da janela que é uma superclasse do stage
         tableViewDepartment.prefHeightProperty().bind(stage.heightProperty()); //Comando para a table view acompanhar o tamanho da janela
     }
-    public void setDepartmentService(DepartmentService departmentService){
-        this.departmentService = departmentService;
-    }
+
+    //-----------------------------------------------------------------//
+
+    //  MAIN LISTA DE DEPARTAMENTO
 
     public void updateTableView(){
         if(departmentService==null) {
@@ -154,14 +167,17 @@ public class DepartmentListController implements Initializable, DataChangeListen
 
         }
         catch (IOException e){
-          //  Alerts.showAlert("Io Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
+            //  Alerts.showAlert("Io Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
             e.printStackTrace();
         }
     }
 
-    //Quando notificar que os dados foram alterados vamos atualizar a tabela
-    @Override
-    public void onDataChanged() {
-        updateTableView();
+    //---------------------------------------------------------------//
+
+    //  GETTERS AND SETTERS
+    public void setDepartmentService(DepartmentService departmentService){
+        this.departmentService = departmentService;
     }
+
+
 }

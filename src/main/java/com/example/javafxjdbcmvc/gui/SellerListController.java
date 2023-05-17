@@ -53,13 +53,24 @@ public class SellerListController implements Initializable, DataChangeListener {
     @FXML
     private Button buttonRegistrer;
 
+    //BOTÕES
+
+    //1. É executado assim que clica no botão seller no menu principa
     @FXML
     public void onButtonRegistrerAction(ActionEvent event){ //pega a referência do controller que realizou o event
-        Stage parentStage = Utils.currentStage(event);
-        Seller Seller = new Seller();
+        Stage parentStage = Utils.currentStage(event); //pega o estágio do menu
+        Seller Seller = new Seller(); //instancia o vendedor
+        //Abre o dialog form, que é a tela com a lista do vendedores, passa o vendedor, o arquivo FXML e o estágio pai do menu
         createDialogForm(Seller, "SellerForms.fxml", parentStage);
     }
 
+    //Quando notificar que os dados foram alterados vamos atualizar a tabela
+    @Override
+    public void onDataChanged() {
+        updateTableView();
+    }
+
+    //Cria o botão de delete para cada item na lista
     private void initDeleteButton(){
         tableColumnDelete.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
         tableColumnDelete.setCellFactory(param -> new TableCell<Seller, Seller>() {
@@ -77,13 +88,17 @@ public class SellerListController implements Initializable, DataChangeListener {
         });
     }
 
+    //Ação do botão de deletar
     private void removeEntity(Seller obj){
+        //Botão de opção do Alert
         Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
+        //Se o botão for clicado
         if (result.get() == ButtonType.OK){
-            if (SellerService == null){
+            if (SellerService == null){ //Programação defensiva para caso o programador esqueça de instanciar o Service
                 throw new IllegalStateException("Service was null");
             }
             try {
+                //Realiza a deleção e atualiza a tela
                 SellerService.delete(obj);
                 updateTableView();
             }
@@ -106,6 +121,7 @@ public class SellerListController implements Initializable, DataChangeListener {
                     return;
                 }
                 setGraphic(button);
+                //Se clicar no botão abre a tela de formulário
                 button.setOnAction(
                         event -> createDialogForm(
                                 obj, "SellerForms.fxml",Utils.currentStage(event)));
@@ -113,8 +129,14 @@ public class SellerListController implements Initializable, DataChangeListener {
         });
     }
 
+
+    // ---------------------------------------------------------------//
+
+    //  INICIALIZAÇÃO
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //Inicia o nó
         initializeNode();
 
     }
@@ -133,14 +155,16 @@ public class SellerListController implements Initializable, DataChangeListener {
         Stage stage = (Stage) Application.getMainScene().getWindow(); //Pega referencia da janela que é uma superclasse do stage
         tableViewSeller.prefHeightProperty().bind(stage.heightProperty()); //Comando para a table view acompanhar o tamanho da janela
     }
-    public void setSellerService(SellerService SellerService){
-        this.SellerService = SellerService;
-    }
 
+
+    // ----------------------------------------------------------------------//
+
+    //  Main do SellerList
     public void updateTableView(){
         if(SellerService==null) {
             throw new IllegalStateException("Service is null");
         }
+
         observableList = FXCollections.observableArrayList();
         observableList.addAll(SellerService.findAll());
         tableViewSeller.setItems(observableList);
@@ -152,25 +176,34 @@ public class SellerListController implements Initializable, DataChangeListener {
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+            //Carrega a AnchorPane
             AnchorPane pane = loader.load();
-
+            //Pega o controlador do formulário
             SellerFormsController controller = loader.getController();
+            //"Seta" o vendedor que foi instanciado no onButtonRegister
             controller.setSeller(Seller);
+            //"Seta" o serviço do Seller e do Department para o departamento que está junto ao usuário
             controller.setServices(new SellerService(), new DepartmentService());
+            //Carrega os objetos associados que é meu comboBox de departamento
             controller.loadAssociateObjects();
-            controller.subscriteDataChangeListener(this); //Se inscreve para receber o evento de inscrição e então executa o onDataChangeListener
+            //Se inscreve para receber o evento de inscrição e então executa o onDataChangeListener
+            controller.subscriteDataChangeListener(this);
+            //Atualiza a lista que está aparecendo na tela
             controller.updateFormData();
-
+            //Cria um novo Stage que é o de formulário
             Stage dialogStage = new Stage();
+            //"Seta" o título
             dialogStage.setTitle("Enter Seller data");
+            //"Seta" a cena que é o AnchorPane
             dialogStage.setScene(new Scene(pane));
-            dialogStage.setResizable(false); //Diz se a janela pode ou não ser redimensionada;
-            dialogStage.initOwner(parentStage); //Stage pai da janela
-            dialogStage.initModality(Modality.WINDOW_MODAL); //diz se a janela é modal ou outro comportamento, modal é travado enqanto não fecha ela
+            //Diz se a janela pode ou não ser redimensionada;
+            dialogStage.setResizable(false);
+            //Stage pai da janela
+            dialogStage.initOwner(parentStage);
+            //diz se a janela é modal ou outro comportamento, modal é travado enqanto não fecha ela
+            dialogStage.initModality(Modality.WINDOW_MODAL);
 
             dialogStage.showAndWait();
-
-
         }
         catch (IOException e){
             Alerts.showAlert("Io Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
@@ -178,11 +211,11 @@ public class SellerListController implements Initializable, DataChangeListener {
         }
     }
 
+    //-------------------------------------------------------------------------//
 
+    // SETTERS
 
-    //Quando notificar que os dados foram alterados vamos atualizar a tabela
-    @Override
-    public void onDataChanged() {
-        updateTableView();
+    public void setSellerService(SellerService SellerService){
+        this.SellerService = SellerService;
     }
 }

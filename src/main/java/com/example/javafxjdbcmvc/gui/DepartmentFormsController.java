@@ -11,7 +11,6 @@ import com.example.javafxjdbcmvc.model.services.DepartmentService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.LightBase;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,6 +33,10 @@ public class DepartmentFormsController implements Initializable {
     private Button buttonSave;
     @FXML
     private Button buttonCancel;
+
+
+    // BOTÕES
+
     @FXML
     public void onButtonSaveAction(ActionEvent event){
         if (department == null){
@@ -56,28 +59,30 @@ public class DepartmentFormsController implements Initializable {
         }
     }
 
-    public void notifyDataChangeListener(){
-        for (DataChangeListener listener:dataChangeListeners){
-            listener.onDataChanged();
-        }
-    }
     @FXML
     public void onButtonCancelAction(ActionEvent event){
         Utils.currentStage(event).close();
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+
+    //---------------------------------------------------------------------//
+
+    // INICIALIZAÇÃO
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        initializeNodes();
     }
 
-    public void setDepartmentService(DepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
-    //Vai adicionar outros objetos na lista
-    public void subscriteDataChangeListener(DataChangeListener listener){
-        dataChangeListeners.add(listener);
+
+    private void initializeNodes(){
+        Constraints.setTextFieldInteger(textFieldId);
+        Constraints.setTextFieldMaxLength(textFieldName, 30);
     }
 
+    //------------------------------------------------------------//
+
+    //  MAIN FORMULARIO
     public void updateFormData(){
         if (department == null){
             throw new IllegalStateException("Entity was null");
@@ -87,10 +92,38 @@ public class DepartmentFormsController implements Initializable {
         textFieldName.setText(verifyIfNameIsNull(department.getName()));
     }
 
+
+    //-------------------------------------------------------------//
+
+    //  UTILITARIOS
+
+    public void notifyDataChangeListener(){
+        for (DataChangeListener listener:dataChangeListeners){
+            listener.onDataChanged();
+        }
+    }
+
+    //Vai adicionar outros objetos na lista
+    public void subscriteDataChangeListener(DataChangeListener listener){
+        dataChangeListeners.add(listener);
+    }
+
+
     private String verifyIfNameIsNull(String name){
         return  (department.getName() != null) ? name : "";
     }
 
+
+    //--------------------------------------------------------------------//
+
+    //  GETTERS AND SETTERS
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public void setDepartmentService(DepartmentService departmentService) {
+        this.departmentService = departmentService;
+    }
 
     private void setErrorMessages(Map<String, String> errorMessages){
         Set<String> fields = errorMessages.keySet();
@@ -115,15 +148,5 @@ public class DepartmentFormsController implements Initializable {
         }
         return obj;
     }
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeNodes();
-    }
 
-
-    private void initializeNodes(){
-        Constraints.setTextFieldInteger(textFieldId);
-        Constraints.setTextFieldMaxLength(textFieldName, 30);
-
-    }
 }
