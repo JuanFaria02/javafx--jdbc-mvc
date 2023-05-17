@@ -42,6 +42,10 @@
             </Label>
             <TextField fx:id="textFieldId" editable="false" GridPane.columnIndex="1" />
             <TextField fx:id="textFieldName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="textFieldEmail" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <DatePicker fx:id="birthDate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="baseSalary" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox fx:id="departmentComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label fx:id="textErrorName" textFill="#f40808" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
@@ -69,13 +73,9 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="textFieldEmail" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="baseSalary" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <DatePicker fx:id="birthDate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label fx:id="textErrorEmail" textFill="#e60909" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Label fx:id="textErrorBithDate" textFill="#db0707" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label fx:id="textErrorBirthDate" textFill="#db0707" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label fx:id="textErrorBaseSalary" textFill="#d91111" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <ComboBox fx:id="departmentComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </children>

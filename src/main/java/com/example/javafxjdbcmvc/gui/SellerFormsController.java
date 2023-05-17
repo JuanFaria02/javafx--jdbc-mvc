@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.util.Callback;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.*;
 
 public class SellerFormsController implements Initializable {
@@ -44,9 +45,9 @@ public class SellerFormsController implements Initializable {
     @FXML
     private ObservableList<Department> departmentObservableList;
     @FXML
-    private Label textErrorEmail;
+    private Label textErrorBirthDate;
     @FXML
-    private Label textErrorBithDate;
+    private Label textErrorEmail;
     @FXML
     private Label textErrorBaseSalary;
     @FXML
@@ -188,6 +189,26 @@ public class SellerFormsController implements Initializable {
         }
     }
 
+    private void makeValidation(){
+        ValidationException exception = new ValidationException("Validation error"); //Instaciou a exceção
+
+        if (textFieldName.getText() == null || textFieldName.getText().trim().equals("")){
+            exception.addErrors("Name", "Field can't be empty");
+        }
+
+        if (textFieldEmail.getText() == null || textFieldEmail.getText().trim().equals("")){
+            exception.addErrors("Email", "Field can't be empty");
+        }
+        if (baseSalary.getText() == null || baseSalary.getText().trim().equals("")){
+            exception.addErrors("baseSalary", "Field can't be empty");
+        }
+        if (birthDate.getValue() == null){
+            exception.addErrors("birthDate", "Field can't be empty");
+        }
+        if (exception.getErrors().size()>0){
+            throw exception;
+        }
+    }
     //---------------------------------------------------------------------//
 
     //   GETTERS AND SETTERS
@@ -204,25 +225,25 @@ public class SellerFormsController implements Initializable {
 
     private void setErrorMessages(Map<String, String> errorMessages){
         Set<String> fields = errorMessages.keySet();
-        if (fields.contains("Name")){
-            textErrorName.setText(errorMessages.get("Name"));
-        }
+
+        textErrorName.setText((fields.contains("Name")?errorMessages.get("Name"):""));
+        textErrorEmail.setText((fields.contains("Email")?errorMessages.get("Email"):""));
+        textErrorBaseSalary.setText((fields.contains("baseSalary")?errorMessages.get("baseSalary"):""));
+        textErrorBirthDate.setText((fields.contains("birthDate")?errorMessages.get("birthDate"):""));
+
+
     }
     private Seller getFormData(){
         Seller obj = new Seller();
 
-        ValidationException exception = new ValidationException("Validation error"); //Instaciou a exceção
         obj.setId(Utils.tryParseToInt(textFieldId.getText()));
-
-        if (textFieldName.getText() == null || textFieldName.getText().trim().equals("")){
-            exception.addErrors("Name", "Field can't be empty");
-        }
+        makeValidation();
 
         obj.setName(textFieldName.getText());
-
-        if (exception.getErrors().size()>0){
-            throw exception;
-        }
+        obj.setEmail(textFieldEmail.getText());
+        obj.setBirthDate(birthDate.getValue());
+        obj.setBaseSalary(Utils.tryParseToDouble(baseSalary.getText()));
+        obj.setDepartment(departmentComboBox.getValue());
         return obj;
     }
 
