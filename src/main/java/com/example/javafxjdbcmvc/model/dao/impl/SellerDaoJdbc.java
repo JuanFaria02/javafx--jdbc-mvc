@@ -42,7 +42,7 @@ public class SellerDaoJdbc implements SellerDao {
 
                 }
                 DB.closeResultSet(rs);
-                System.out.println("Done");
+
             }
             else {
                 throw new DbException("Error. Insert didn't conclude");
